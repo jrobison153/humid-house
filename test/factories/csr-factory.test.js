@@ -1,8 +1,8 @@
 const csrFactory = require('../../lib/factories/csr-factory');
-const defaultCsr = require('../../lib/adapters/CachedCsr');
+const cachedCsr = require('../../lib/adapters/CachedCsr');
 const csr = require('../doubles/Csr');
 
-const DEFAULT_CSR_NAME = defaultCsr.name();
+const DEFAULT_CSR_NAME = cachedCsr().name();
 
 describe('csrFactory tests', () => {
 
@@ -44,7 +44,7 @@ describe('csrFactory tests', () => {
 
         const defaultCsr = csrFactory.getDefaultCsrAdapter();
 
-        expect(defaultCsr.name()).toEqual(DEFAULT_CSR_NAME);
+        expect(defaultCsr().name()).toEqual(DEFAULT_CSR_NAME);
       });
     });
   });
@@ -53,7 +53,7 @@ describe('csrFactory tests', () => {
 
     it('Then it is a singleton', () => {
 
-      const csrDouble = csr();
+      const csrDouble = csr;
 
       csrFactory.setDefaultCsrAdapter(csrDouble);
 
@@ -61,7 +61,7 @@ describe('csrFactory tests', () => {
 
       const defaultCsr = csrFactorySecondReference.getDefaultCsrAdapter();
 
-      expect(defaultCsr.name()).toEqual(csrDouble.name());
+      expect(defaultCsr().name()).toEqual(csrDouble().name());
     });
   });
 });

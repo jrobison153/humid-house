@@ -8,3 +8,6 @@ cdk.out
 .parcel-cache
 
 .idea
+
+server.csr
+server.key

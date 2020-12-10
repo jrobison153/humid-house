@@ -1,5 +1,7 @@
 module.exports = () => {
 
+  const cache = {};
+
   let cachedCsr;
   let cacheHitThingName;
   let isUnrecoverableError = false;
@@ -26,7 +28,25 @@ module.exports = () => {
       cb(err, data);
     },
 
+    putSecretValue: (params, cb) => {
+
+      cache[params.SecretId] = params.SecretString;
+
+      cb(null, {});
+    },
+
     // ============ Utility functions, not part of cache interface
+
+    clearCache: () => {
+
+      cachedCsr = '';
+      cacheHitThingName = '';
+    },
+
+    getCachedEntryForKey: (key) => {
+
+      return cache[key];
+    },
 
     setCachedCsrHitForThing: (thingName, csr) => {
       cachedCsr = csr;
