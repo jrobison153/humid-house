@@ -1,10 +1,9 @@
 module.exports = () => {
 
-  const cache = {};
+  let cache = {};
 
-  let cachedCsr;
-  let cacheHitThingName;
-  let isUnrecoverableError = false;
+  let isCacheGetUnrecoverableError = false;
+  let isCachePutUnrecoverableError = false;
 
   return {
     getSecretValue: (params, cb) => {
@@ -12,17 +11,20 @@ module.exports = () => {
       let err = null;
       let data = null;
 
-      if (isUnrecoverableError) {
+      if (isCacheGetUnrecoverableError) {
 
         err = new Error('Something really bad happened');
-      } else if (params.SecretId !== cacheHitThingName) {
+      } else if (cache[params.SecretId]) {
+
+        data = {
+          SecretString: cache[params.SecretId],
+        };
+
+      } else {
 
         err = new Error(`Secret with id ${params.SecretId} not found`);
 
         err.code = 'ResourceNotFoundException';
-      } else {
-
-        data = {SecretString: cachedCsr};
       }
 
       cb(err, data);
@@ -30,32 +32,42 @@ module.exports = () => {
 
     putSecretValue: (params, cb) => {
 
-      cache[params.SecretId] = params.SecretString;
+      let err = null;
 
-      cb(null, {});
+      if (isCachePutUnrecoverableError) {
+
+        err = new Error('Bad stuff happened trying to put object in cache');
+      } else {
+
+        cache[params.SecretId] = params.SecretString;
+      }
+
+
+      cb(err, {});
     },
 
     // ============ Utility functions, not part of cache interface
 
     clearCache: () => {
-
-      cachedCsr = '';
-      cacheHitThingName = '';
+      cache = {};
     },
 
     getCachedEntryForKey: (key) => {
-
       return cache[key];
     },
 
-    setCachedCsrHitForThing: (thingName, csr) => {
-      cachedCsr = csr;
-      cacheHitThingName = thingName;
+    setCachedCsrHitForThing: (thingName, identity) => {
+      cache[thingName] = identity;
     },
 
-    setupForUnrecoverableError: () => {
+    setupGetForUnrecoverableError: () => {
 
-      isUnrecoverableError = true;
+      isCacheGetUnrecoverableError = true;
+    },
+
+    setupPutForUnrecoverableError: () => {
+
+      isCachePutUnrecoverableError = true;
     },
   };
 };

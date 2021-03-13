@@ -13,5 +13,7 @@ module.exports = (existingStackName, expectedCsr) => {
     getCsrForThing: async (cache, thingName) => expectedCsr,
 
     name: () => 'CSR Test Double',
+
+    cacheVersion: () => '1.0.0',
   };
 };

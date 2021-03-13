@@ -1,45 +1,51 @@
 module.exports = (fileSystem) => {
 
-  let spawnCount = 1;
-  let dataToWriteToFile;
+  let dataToWriteToFile = [];
   let isUnrecoverableError = false;
   let stderrText;
   let stderrCb;
   let theCommand;
   let theArgs;
 
-  const setupFileReadAndExit = (cb) => {
-    {
+  const _setupFileReadAndExit = (command, args, cb) => {
 
-      // make sure that we only read CSR data that was created as the result of an execution of the openSSl
-      // commands
-      let data;
+    // make sure that we only read CSR data that was created as the result of an execution of the openSSl
+    // commands
 
-      if (dataToWriteToFile) {
-        data = dataToWriteToFile;
-      } else {
-        data = `Bogus CSR Number ${spawnCount}`;
+    const stubFileData = dataToWriteToFile.find((item) => {
+
+      let foundIt = false;
+      if (command === item.command) {
+
+        const hasSameArgs = args.every((arg) => item.args.includes(arg));
+        const hasSameLength = args.length === item.args.length;
+
+        foundIt = hasSameArgs && hasSameLength;
       }
 
-      fileSystem.readFileQueuePush(data);
+      return foundIt;
+    });
 
-      spawnCount++;
+    if (stubFileData) {
 
-      cb(0);
+      fileSystem.readFileReturnDataForFilePath(stubFileData.fileName, stubFileData.data);
     }
+
+    cb(0);
   };
 
-  const writeStderrAndExit = (cb) => {
+  const _writeStderrAndExit = (cb) => {
     stderrCb(stderrText);
     cb(1);
   };
 
-  const terminateProcess = (command, cb) => {
+  // TODO: command and args are pass through args, needs refactor/better design
+  const _terminateProcess = (command, args, cb) => {
 
     if (isUnrecoverableError) {
-      writeStderrAndExit(cb);
+      _writeStderrAndExit(cb);
     } else {
-      setupFileReadAndExit(cb);
+      _setupFileReadAndExit(command, args, cb);
     }
   };
 
@@ -55,7 +61,8 @@ module.exports = (fileSystem) => {
         on: function(event, cb) {
 
           if (event === 'close') {
-            terminateProcess(command, cb);
+
+            _terminateProcess(command, args, cb);
           }
         },
 
@@ -74,8 +81,12 @@ module.exports = (fileSystem) => {
       return theArgs;
     },
 
-    csrDataToWriteToFile: (data) => {
-      dataToWriteToFile = data;
+    clearDataToWrite: () => {
+      dataToWriteToFile = [];
+    },
+
+    dataToWriteToFileForSpawn: (command, args, fileName, data) => {
+      dataToWriteToFile.push({command, args, fileName, data});
     },
 
     command: () => {

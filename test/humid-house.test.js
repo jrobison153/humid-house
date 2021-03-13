@@ -13,7 +13,6 @@ const cache = require('./doubles/Cache');
 
 const awsExpect = awsAssert.expect;
 const STACK_ID = 'MyTestStack';
-const EXPECTED_CSR = 'some bogus csr, yeah this looks nothing like a csr but this is a test so it does not matter';
 
 let defaultCsrAdapter;
 let cacheStub;
@@ -21,7 +20,6 @@ let cacheStub;
 beforeEach(async () => {
 
   cacheStub = cache();
-  cacheStub.setCachedCsrHitForThing('raspberry-pi-s01', EXPECTED_CSR);
 
   defaultCsrAdapter = cachedCsr(cacheStub);
 
@@ -89,18 +87,6 @@ describe('When generating the stack', () => {
     }));
   });
 
-  describe('And the CSR has been previously cached', () => {
-
-    test('Then certificate assigned with cached CSR', async () => {
-
-      const stack = await humidHouseStack(STACK_ID);
-
-      awsExpect(stack).to(haveResourceLike('AWS::IoT::Certificate', {
-        CertificateSigningRequest: EXPECTED_CSR,
-      }));
-    });
-  });
-
   describe('And the CSR has not been previously cached', () => {
 
     test('Then certificate assigned with new CSR', async () => {
@@ -138,6 +124,5 @@ describe('When generating the stack', () => {
     });
   });
 });
-
 
 // ============ Util Functions ================

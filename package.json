@@ -21,6 +21,7 @@
   "dependencies": {
     "@aws-cdk/aws-iot": "^1.62.0",
     "@aws-cdk/core": "1.62.0",
+    "aws-sdk": "^2.825.0",
     "babel-eslint": "^10.1.0"
   }
 }

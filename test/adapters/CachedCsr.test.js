@@ -26,16 +26,38 @@ describe('CachedCsr Tests', () => {
 
       const expectedCsr = 'not a real CSR, just testing';
 
-      processSpy.csrDataToWriteToFile(expectedCsr);
+      processSpy.dataToWriteToFileForSpawn(
+          csr.csrCreationCommand(),
+          csr.csrCreationArgs(),
+          csr.outCsrFileName(),
+          expectedCsr,
+      );
 
-      const csrText = await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
+      const csrData = await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
 
-      expect(csrText).toEqual(expectedCsr);
+      expect(csrData).toEqual(expectedCsr);
     });
 
     it('Then multiple calls to a CSR for different Things returns different CSRs', async () => {
 
+      processSpy.dataToWriteToFileForSpawn(
+          csr.csrCreationCommand(),
+          csr.csrCreationArgs(),
+          csr.outCsrFileName(),
+          'I am the first csr',
+      );
+
       const firstCsr = await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
+
+      processSpy.clearDataToWrite();
+
+      processSpy.dataToWriteToFileForSpawn(
+          csr.csrCreationCommand(),
+          csr.csrCreationArgs(),
+          csr.outCsrFileName(),
+          'I am the second csr',
+      );
+
       const secondCsr = await csr.getCsrForThing(processSpy, fsSpy, 'another-thing-name');
 
       expect(firstCsr).not.toEqual(secondCsr);
@@ -61,13 +83,6 @@ describe('CachedCsr Tests', () => {
       expect(actualArgs).toEqual(expectedArgs);
     });
 
-    it('Then the CSR file created is read from disk', async () => {
-
-      await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
-
-      expect(fsSpy.fileRead()).toEqual('server.csr');
-    });
-
     it('Then the CSR file created is read with the correct options', async () => {
 
       await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
@@ -79,28 +94,40 @@ describe('CachedCsr Tests', () => {
 
       const expectedCsr = 'not a real CSR, just testing';
 
-      processSpy.csrDataToWriteToFile(expectedCsr);
+      processSpy.dataToWriteToFileForSpawn(
+          csr.csrCreationCommand(),
+          csr.csrCreationArgs(),
+          csr.outCsrFileName(),
+          expectedCsr,
+      );
 
       await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
 
-      const cachedValue = cacheStub.getCachedEntryForKey('a-thing-name-csr');
+      const cachedValue = cacheStub.getCachedEntryForKey('a-thing-name-identity');
 
-      expect(cachedValue).toEqual(expectedCsr);
+      const parsedCachedValue = JSON.parse(cachedValue);
+
+      expect(parsedCachedValue.csr).toEqual(expectedCsr);
     });
 
     it('Then the newly created CSR associated private key is cached with the correct key', async () => {
 
       const expectedPrivateKey = 'not a real private key, just testing';
 
-      processSpy.pipeDataForFileWrite(expectedPrivateKey, csr.privateKeyFileName());
-
-      processSpy.csrDataToWriteToFile(expectedCsr);
+      processSpy.dataToWriteToFileForSpawn(
+          csr.csrCreationCommand(),
+          csr.csrCreationArgs(),
+          csr.privateKeyFileName(),
+          expectedPrivateKey,
+      );
 
       await csr.getCsrForThing(processSpy, fsSpy, 'a-thing-name');
 
-      const cachedValue = cacheStub.getCachedEntryForKey('a-thing-name-csr');
+      const cachedValue = cacheStub.getCachedEntryForKey('a-thing-name-identity');
 
-      expect(cachedValue).toEqual(expectedCsr);
+      const parsedCachedValue = JSON.parse(cachedValue);
+
+      expect(parsedCachedValue.privateKey).toEqual(expectedPrivateKey);
     });
 
     describe('And there is an error generating the CSR', () => {
@@ -153,9 +180,14 @@ describe('CachedCsr Tests', () => {
     it('Then the cached CSR is returned', async () => {
 
       const expectedCsr = 'This is the cached CSR';
+      const identity = {
+        csr: expectedCsr,
+        privateKey: '',
+      };
+
       const thingName = 'myThingy';
 
-      cacheStub.setCachedCsrHitForThing(thingName, expectedCsr);
+      cacheStub.setCachedCsrHitForThing(`${thingName}-identity`, JSON.stringify(identity));
 
       const csrText = await csr.getCsrForThing(processSpy, fsSpy, thingName);
 
@@ -169,11 +201,29 @@ describe('CachedCsr Tests', () => {
 
       try {
 
-        cache.setupForUnrecoverableError();
+        cacheStub.setupGetForUnrecoverableError();
 
-        await csr.getCsrForThing(processSpy, processSpy, 'not important for test');
+        await csr.getCsrForThing(processSpy, fsSpy, 'not important for test');
       } catch (e) {
-        return expect(e).toBeDefined();
+        return expect(e.toString()).toMatch(/.*Unrecoverable error attempting to get CSR from cache.*/);
+      }
+
+      // should only get here if test legitimately fails
+      return expect(true).toBeFalsy();
+    });
+  });
+
+  describe('When there is an unrecoverable error putting the data into the cache', () => {
+
+    it('Then an error is returned', async () => {
+
+      try {
+
+        cacheStub.setupPutForUnrecoverableError();
+
+        await csr.getCsrForThing(processSpy, fsSpy, 'not important for test');
+      } catch (e) {
+        return expect(e.toString()).toMatch(/.*Unrecoverable error attempting to put CSR in cache.*/);
       }
 
       // should only get here if test legitimately fails

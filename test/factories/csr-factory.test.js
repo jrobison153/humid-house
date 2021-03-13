@@ -8,11 +8,18 @@ describe('csrFactory tests', () => {
 
   describe('When getting the default CSR adapter', () => {
 
+    let defaultCsr;
+
+    beforeEach(() => {
+      defaultCsr = csrFactory.getDefaultCsrAdapter();
+    });
+
     it('Then the AwsStackCsr object is returned', () => {
-
-      const defaultCsr = csrFactory.getDefaultCsrAdapter();
-
       expect(defaultCsr.name()).toEqual(DEFAULT_CSR_NAME);
+    });
+
+    it('Then the AWS SecretsManager version 2017-10-17 is the cache implementation', () => {
+      expect(defaultCsr.cacheVersion()).toEqual('2017-10-17');
     });
   });
 
@@ -49,7 +56,7 @@ describe('csrFactory tests', () => {
     });
   });
 
-  describe('When factor is created', () => {
+  describe('When factory is created', () => {
 
     it('Then it is a singleton', () => {
 

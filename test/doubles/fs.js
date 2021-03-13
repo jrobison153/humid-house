@@ -1,7 +1,6 @@
 module.exports = () => {
 
-  const readFileQueue = [];
-  let queueIndex = 0;
+  const readFileData = {};
   let errText = '';
   let isUnrecoverableError = false;
   let theFileRead = '';
@@ -20,8 +19,7 @@ module.exports = () => {
         cb(error, null);
       } else {
 
-        cb(null, readFileQueue[queueIndex]);
-        queueIndex++;
+        cb(null, readFileData[path]);
       }
     },
 
@@ -35,8 +33,8 @@ module.exports = () => {
       return theFileReadOptions;
     },
 
-    readFileQueuePush: (fileData) => {
-      readFileQueue.push(fileData);
+    readFileReturnDataForFilePath: (fileName, data) => {
+      readFileData[fileName] = data;
     },
 
     setupForUnrecoverableError: (err) => {
