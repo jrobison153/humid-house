@@ -8,7 +8,7 @@
     "cdk": "cdk",
     "lint": "./node_modules/.bin/eslint \"lib/**/*.js\" \"bin/**/*.js\"  \"test/**/*.js\"",
     "pre-commit": "yarn lint && yarn test",
-    "synth": "cdk synthesize --app ./bin/humid-house.js",
+    "synth": "node ./scripts/synth.js",
     "test": "jest"
   },
   "devDependencies": {

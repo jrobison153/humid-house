@@ -1,6 +1,7 @@
 /* eslint-disable require-jsdoc */
 const awsAssert = require('@aws-cdk/assert');
 const humidHouseStack = require('../lib/bootstrap-stack');
+const {RASPBERRY_PI_S01_CERT_ID, RASPBERRY_PI_S01} = require('../lib/humid-house-stack');
 const {
   countResources,
   haveResource,
@@ -53,7 +54,7 @@ describe('When generating the stack', () => {
 
     const synthedStack = SynthUtils.toCloudFormation(stack);
 
-    expect(synthedStack.Resources.RaspberryPiS01).toBeDefined();
+    expect(synthedStack.Resources[RASPBERRY_PI_S01]).toBeDefined();
   });
 
   test('Then the IoT thing has its name set', async () => {
@@ -61,7 +62,7 @@ describe('When generating the stack', () => {
     const stack = await humidHouseStack(STACK_ID);
 
     awsExpect(stack).to(haveResourceLike('AWS::IoT::Thing', {
-      ThingName: 'raspberry-pi-s01',
+      ThingName: RASPBERRY_PI_S01,
     }));
   });
 
@@ -97,7 +98,7 @@ describe('When generating the stack', () => {
 
       const synthedStack = SynthUtils.toCloudFormation(stack);
 
-      expect(synthedStack.Resources.ThingCert.Properties.CertificateSigningRequest)
+      expect(synthedStack.Resources[RASPBERRY_PI_S01_CERT_ID].Properties.CertificateSigningRequest)
           .toMatch(/-----BEGIN CERTIFICATE REQUEST-----[\s\S]+-----END CERTIFICATE REQUEST-----/);
     });
   });
@@ -112,13 +113,14 @@ describe('When generating the stack', () => {
 
       const firstSynthedStack = SynthUtils.toCloudFormation(firstStack);
 
-      const initiallyCreatedCsr = firstSynthedStack.Resources.ThingCert.Properties.CertificateSigningRequest;
+      const initiallyCreatedCsr = firstSynthedStack
+          .Resources[RASPBERRY_PI_S01_CERT_ID].Properties.CertificateSigningRequest;
 
       const secondStack = await humidHouseStack(STACK_ID);
 
       const secondSynthedStack = SynthUtils.toCloudFormation(secondStack);
 
-      const cachedHitCsr = secondSynthedStack.Resources.ThingCert.Properties.CertificateSigningRequest;
+      const cachedHitCsr = secondSynthedStack.Resources[RASPBERRY_PI_S01_CERT_ID].Properties.CertificateSigningRequest;
 
       expect(initiallyCreatedCsr).toEqual(cachedHitCsr);
     });
