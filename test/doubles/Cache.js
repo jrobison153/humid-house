@@ -1,9 +1,10 @@
 module.exports = () => {
 
-  let cache = {};
+  const _cache = {};
 
-  let isCacheGetUnrecoverableError = false;
-  let isCachePutUnrecoverableError = false;
+  let _isCacheGetUnrecoverableError = false;
+  let _isCachePutUnrecoverableError = false;
+  let _putSecretValueCalled = false;
 
   return {
     getSecretValue: (params, cb) => {
@@ -11,13 +12,13 @@ module.exports = () => {
       let err = null;
       let data = null;
 
-      if (isCacheGetUnrecoverableError) {
+      if (_isCacheGetUnrecoverableError) {
 
         err = new Error('Something really bad happened');
-      } else if (cache[params.SecretId]) {
+      } else if (_cache[params.SecretId]) {
 
         data = {
-          SecretString: cache[params.SecretId],
+          SecretString: _cache[params.SecretId],
         };
 
       } else {
@@ -32,42 +33,41 @@ module.exports = () => {
 
     putSecretValue: (params, cb) => {
 
+      _putSecretValueCalled = true;
+
       let err = null;
 
-      if (isCachePutUnrecoverableError) {
+      if (_isCachePutUnrecoverableError) {
 
         err = new Error('Bad stuff happened trying to put object in cache');
       } else {
 
-        cache[params.SecretId] = params.SecretString;
+        _cache[params.SecretId] = params.SecretString;
       }
-
 
       cb(err, {});
     },
 
     // ============ Utility functions, not part of cache interface
 
-    clearCache: () => {
-      cache = {};
+    getCachedEntryForKey: (key) => {
+      return _cache[key];
     },
 
-    getCachedEntryForKey: (key) => {
-      return cache[key];
-    },
+    putSecretValueCalled: () => _putSecretValueCalled,
 
     setCachedCsrHitForThing: (thingName, identity) => {
-      cache[thingName] = identity;
+      _cache[thingName] = identity;
     },
 
     setupGetForUnrecoverableError: () => {
 
-      isCacheGetUnrecoverableError = true;
+      _isCacheGetUnrecoverableError = true;
     },
 
     setupPutForUnrecoverableError: () => {
 
-      isCachePutUnrecoverableError = true;
+      _isCachePutUnrecoverableError = true;
     },
   };
 };

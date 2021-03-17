@@ -177,9 +177,11 @@ describe('CachedCsr Tests', () => {
 
   describe('When CSR is cached', () => {
 
-    it('Then the cached CSR is returned', async () => {
+    let csrText;
+    const expectedCsr = 'This is the cached CSR';
 
-      const expectedCsr = 'This is the cached CSR';
+    beforeEach(async () => {
+
       const identity = {
         csr: expectedCsr,
         privateKey: '',
@@ -189,9 +191,17 @@ describe('CachedCsr Tests', () => {
 
       cacheStub.setCachedCsrHitForThing(`${thingName}-identity`, JSON.stringify(identity));
 
-      const csrText = await csr.getCsrForThing(processSpy, fsSpy, thingName);
+      csrText = await csr.getCsrForThing(processSpy, fsSpy, thingName);
+    });
+
+    it('Then the cached CSR is returned', async () => {
 
       expect(csrText).toEqual(expectedCsr);
+    });
+
+    it('Then there is no attempt to re-cache the CSR', () => {
+
+      expect(cacheStub.putSecretValueCalled()).toEqual(false);
     });
   });
 

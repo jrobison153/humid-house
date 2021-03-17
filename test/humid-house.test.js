@@ -23,6 +23,7 @@ const STACK_ID = 'MyTestStack';
 let defaultCsrAdapter;
 let cacheStub;
 let stack;
+let synthedStack;
 
 beforeEach(async () => {
 
@@ -33,6 +34,8 @@ beforeEach(async () => {
   csrFactory.setDefaultCsrAdapter(defaultCsrAdapter);
 
   stack = await humidHouseStack(STACK_ID);
+
+  synthedStack = SynthUtils.toCloudFormation(stack);
 });
 
 afterEach(() => {
@@ -41,6 +44,13 @@ afterEach(() => {
 });
 
 describe('When generating the stack', () => {
+
+  test('Then the humid-house app tag is applied to the stack', () => {
+
+    const tags = stack.tags;
+    const renderedTags = tags.renderTags();
+    expect(renderedTags).toEqual(expect.arrayContaining([{Key: 'app', Value: 'humid-house'}]));
+  });
 
   test('Then the IoT thing exists', async () => {
 
@@ -53,8 +63,6 @@ describe('When generating the stack', () => {
   });
 
   test('Then there is an IoT thing with the correct id', async () => {
-
-    const synthedStack = SynthUtils.toCloudFormation(stack);
 
     expect(synthedStack.Resources[RASPBERRY_PI_S01]).toBeDefined();
   });
@@ -87,8 +95,6 @@ describe('When generating the stack', () => {
   describe('And the CSR has not been previously cached', () => {
 
     test('Then certificate assigned with new CSR', async () => {
-
-      const synthedStack = SynthUtils.toCloudFormation(stack);
 
       expect(synthedStack.Resources[RASPBERRY_PI_S01_CERT_ID].Properties.CertificateSigningRequest)
           .toMatch(/-----BEGIN CERTIFICATE REQUEST-----[\s\S]+-----END CERTIFICATE REQUEST-----/);
