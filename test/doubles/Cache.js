@@ -31,7 +31,7 @@ module.exports = () => {
       cb(err, data);
     },
 
-    putSecretValue: (params, cb) => {
+    createSecret: (params, cb) => {
 
       _putSecretValueCalled = true;
 
@@ -42,7 +42,7 @@ module.exports = () => {
         err = new Error('Bad stuff happened trying to put object in cache');
       } else {
 
-        _cache[params.SecretId] = params.SecretString;
+        _cache[params.Name] = params.SecretString;
       }
 
       cb(err, {});

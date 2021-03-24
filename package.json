@@ -6,6 +6,7 @@
   },
   "scripts": {
     "cdk": "cdk",
+    "deploy": "cdk deploy",
     "lint": "./node_modules/.bin/eslint \"lib/**/*.js\" \"bin/**/*.js\"  \"test/**/*.js\"",
     "pre-commit": "yarn lint && yarn test",
     "synth": "node ./scripts/synth.js",

@@ -1,12 +1,8 @@
-# Welcome to your CDK JavaScript project!
+# Welcome to the Humid House
 
-This is a blank project for JavaScript development with CDK.
+A fun CDK project for an IoT playground using an IoT humidity sensor
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
+# Design Decisions
 
-## Useful commands
+We use a local keytool process to generate the necessary CSR and private key which are then store them in AWS Secrets Manager (we did not want to pay for AWS Certificate Manager). This happens only the first time the CDK is deployed, subsequent deployments will retrieve the CSR from the Secrets Manager for the IoT thing. The private key is also stored in SecretsManager and must be installed on the IoT device. There is currently no automated process for rotating keys.  
 
- * `npm run test`         perform the jest unit tests
- * `cdk deploy`           deploy this stack to your default AWS account/region
- * `cdk diff`             compare deployed stack with current state
- * `cdk synth`            emits the synthesized CloudFormation template
