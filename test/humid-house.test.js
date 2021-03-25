@@ -133,7 +133,10 @@ describe('When generating the stack', () => {
               Ref: RASPBERRY_PI_S01,
             },
             Principal: {
-              Ref: RASPBERRY_PI_S01_CERT_ID,
+              'Fn::GetAtt': [
+                RASPBERRY_PI_S01_CERT_ID,
+                'Arn',
+              ],
             },
           },
         },
