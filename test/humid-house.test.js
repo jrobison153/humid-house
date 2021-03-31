@@ -2,15 +2,18 @@
 const awsAssert = require('@aws-cdk/assert');
 const humidHouseStack = require('../lib/bootstrap-stack');
 const {
+  HUMIDITY_TOPIC,
   RASPBERRY_PI_S01_CERT_ID,
   RASPBERRY_PI_S01,
-  RASPBERRY_PI_S01_PRINCIPAL_ATTACHEMENT_ID,
+  RASPBERRY_PI_S01_PRINCIPAL_ATTACHMENT_ID,
 } = require('../lib/humid-house-stack');
 const {
+  arrayWith,
   beASupersetOfTemplate,
   countResources,
   haveResource,
   haveResourceLike,
+  objectLike,
   SynthUtils,
 } = awsAssert;
 const cachedCsr = require('../lib/adapters/CachedCsr');
@@ -19,11 +22,11 @@ const cache = require('./doubles/Cache');
 
 const awsExpect = awsAssert.expect;
 const STACK_ID = 'MyTestStack';
+const BOGUS_ACCOUNT_ID = '123456789';
+const BOGUS_ACCOUNT_REGION = 'mykitchen';
 
 let defaultCsrAdapter;
 let cacheStub;
-let stack;
-let synthedStack;
 
 beforeEach(async () => {
 
@@ -33,9 +36,8 @@ beforeEach(async () => {
 
   csrFactory.setDefaultCsrAdapter(defaultCsrAdapter);
 
-  stack = await humidHouseStack(STACK_ID);
-
-  synthedStack = SynthUtils.toCloudFormation(stack);
+  process.env.CDK_DEFAULT_ACCOUNT = BOGUS_ACCOUNT_ID;
+  process.env.CDK_DEFAULT_REGION = BOGUS_ACCOUNT_REGION;
 });
 
 afterEach(() => {
@@ -45,11 +47,33 @@ afterEach(() => {
 
 describe('When generating the stack', () => {
 
+  let stack;
+  let synthedStack;
+
+  beforeEach(async () => {
+
+    stack = await humidHouseStack(STACK_ID);
+
+    synthedStack = SynthUtils.toCloudFormation(stack);
+  });
+
   test('Then the humid-house app tag is applied to the stack', () => {
 
     const tags = stack.tags;
+
     const renderedTags = tags.renderTags();
+
     expect(renderedTags).toEqual(expect.arrayContaining([{Key: 'app', Value: 'humid-house'}]));
+  });
+
+  test('Then the stack account is set to the value of the CDK_DEFAULT_ACCOUNT', () => {
+
+    expect(stack.account).toEqual(BOGUS_ACCOUNT_ID);
+  });
+
+  test('Then the stack region is set to the value of the CDK_DEFAULT_REGION', () => {
+
+    expect(stack.region).toEqual(BOGUS_ACCOUNT_REGION);
   });
 
   test('Then the IoT thing exists', async () => {
@@ -126,7 +150,7 @@ describe('When generating the stack', () => {
 
     awsExpect(stack).to(beASupersetOfTemplate({
       Resources: {
-        [RASPBERRY_PI_S01_PRINCIPAL_ATTACHEMENT_ID]: {
+        [RASPBERRY_PI_S01_PRINCIPAL_ATTACHMENT_ID]: {
           Type: 'AWS::IoT::ThingPrincipalAttachment',
           Properties: {
             ThingName: {
@@ -140,6 +164,44 @@ describe('When generating the stack', () => {
             },
           },
         },
+      },
+    }));
+  });
+
+  test('Then the thing is granted permission to connect to IoT Core', () => {
+
+    awsExpect(stack).to(haveResourceLike('AWS::IoT::Policy', {
+      PolicyDocument: {
+        Statement: arrayWith(objectLike(
+            {
+              Effect: 'Allow',
+              Action: [
+                'iot:Connect',
+              ],
+              Resource: [
+                `arn:aws:iot:${BOGUS_ACCOUNT_REGION}:${BOGUS_ACCOUNT_ID}:client/${RASPBERRY_PI_S01}`,
+              ],
+            }),
+        ),
+      },
+    }));
+  });
+
+  test('Then the thing is granted permission to publish to the humidity topic', () => {
+
+    awsExpect(stack).to(haveResourceLike('AWS::IoT::Policy', {
+      PolicyDocument: {
+        Statement: arrayWith(objectLike(
+            {
+              Effect: 'Allow',
+              Action: [
+                'iot:Publish',
+              ],
+              Resource: [
+                `arn:aws:iot:${BOGUS_ACCOUNT_REGION}:${BOGUS_ACCOUNT_ID}:topic/${HUMIDITY_TOPIC}`,
+              ],
+            }),
+        ),
       },
     }));
   });

@@ -13,6 +13,15 @@
     "@aws-cdk/cx-api" "1.62.0"
     constructs "^3.0.4"
 
+"@aws-cdk/aws-iam@^1.95.1":
+  version "1.95.1"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/aws-iam/-/aws-iam-1.95.1.tgz#e4e2787b974124ae509a208968104ca71cd4514e"
+  integrity sha1-5OJ4e5dBJK5QmiCJaBBMpxzUUU4=
+  dependencies:
+    "@aws-cdk/core" "1.95.1"
+    "@aws-cdk/region-info" "1.95.1"
+    constructs "^3.3.69"
+
 "@aws-cdk/aws-iot@^1.62.0":
   version "1.62.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/aws-iot/-/aws-iot-1.62.0.tgz#33bb436d1cab4073a0ae81fef797dc02affe97f3"
@@ -35,6 +44,14 @@
   dependencies:
     jsonschema "^1.2.5"
     semver "^7.2.2"
+
+"@aws-cdk/cloud-assembly-schema@1.95.1":
+  version "1.95.1"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-1.95.1.tgz#f1ee43ddd7b91f0f443f351f3e382e3ac17dda0c"
+  integrity sha1-8e5D3de5Hw9EPzUfPjguOsF92gw=
+  dependencies:
+    jsonschema "^1.4.0"
+    semver "^7.3.5"
 
 "@aws-cdk/cloudformation-diff@1.62.0":
   version "1.62.0"
@@ -59,6 +76,20 @@
     fs-extra "^9.0.1"
     minimatch "^3.0.4"
 
+"@aws-cdk/core@1.95.1":
+  version "1.95.1"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/core/-/core-1.95.1.tgz#5ef20be2ce95c42b41dd458596c64784dfc2ccbb"
+  integrity sha1-XvIL4s6VxCtB3UWFlsZHhN/CzLs=
+  dependencies:
+    "@aws-cdk/cloud-assembly-schema" "1.95.1"
+    "@aws-cdk/cx-api" "1.95.1"
+    "@aws-cdk/region-info" "1.95.1"
+    "@balena/dockerignore" "^1.0.2"
+    constructs "^3.3.69"
+    fs-extra "^9.1.0"
+    ignore "^5.1.8"
+    minimatch "^3.0.4"
+
 "@aws-cdk/cx-api@1.62.0":
   version "1.62.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/cx-api/-/cx-api-1.62.0.tgz#7c5179d3d35eb82bfa2bc9f0b66bc6e4d24f62a3"
@@ -67,10 +98,23 @@
     "@aws-cdk/cloud-assembly-schema" "1.62.0"
     semver "^7.2.2"
 
+"@aws-cdk/cx-api@1.95.1":
+  version "1.95.1"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/cx-api/-/cx-api-1.95.1.tgz#7343ff8e40fa4bc8c1b9537393041625c732bbfc"
+  integrity sha1-c0P/jkD6S8jBuVNzkwQWJccyu/w=
+  dependencies:
+    "@aws-cdk/cloud-assembly-schema" "1.95.1"
+    semver "^7.3.5"
+
 "@aws-cdk/region-info@1.62.0":
   version "1.62.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/region-info/-/region-info-1.62.0.tgz#088e49352e055d4bb5c911b2978ccb702554b84c"
   integrity sha1-CI5JNS4FXUu1yRGyl4zLcCVUuEw=
+
+"@aws-cdk/region-info@1.95.1":
+  version "1.95.1"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@aws-cdk/region-info/-/region-info-1.95.1.tgz#860fa8c4e160dce165eb669a4f8c28a34b8c5ce1"
+  integrity sha1-hg+oxOFg3OFl62aaT4woo0uMXOE=
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
   version "7.10.4"
@@ -327,6 +371,11 @@
     "@babel/helper-validator-identifier" "^7.10.4"
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
+
+"@balena/dockerignore@^1.0.2":
+  version "1.0.2"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/@balena/dockerignore/-/dockerignore-1.0.2.tgz#9ffe4726915251e8eb69f44ef3547e0da2c03e0d"
+  integrity sha1-n/5HJpFSUejrafRO81R+DaLAPg0=
 
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
@@ -1320,6 +1369,11 @@ constructs@^3.0.4:
   resolved "https://repo.forge.lmig.com/api/npm/npm/constructs/-/constructs-3.0.4.tgz#eb1ed5b80f6600b8d50de83971357ae0fe8e29a2"
   integrity sha1-6x7VuA9mALjVDeg5cTV64P6OKaI=
 
+constructs@^3.3.69:
+  version "3.3.71"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/constructs/-/constructs-3.3.71.tgz#5a3e968de484ad327bc2650aa4a7f37a39834ac5"
+  integrity sha1-Wj6WjeSErTJ7wmUKpKfzejmDSsU=
+
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/convert-source-map/-/convert-source-map-1.7.0.tgz#17a2cb882d7f77d3490585e2ce6c524424a3a442"
@@ -1989,6 +2043,16 @@ fs-extra@^9.0.1:
     jsonfile "^6.0.1"
     universalify "^1.0.0"
 
+fs-extra@^9.1.0:
+  version "9.1.0"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
+  integrity sha1-WVRGDHZKjaIJS6NVS/g55rmnyG0=
+  dependencies:
+    at-least-node "^1.0.0"
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
@@ -2239,6 +2303,11 @@ ignore@^4.0.6:
   version "4.0.6"
   resolved "https://repo.forge.lmig.com/api/npm/npm/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha1-dQ49tYYgh7RzfrrIIH/9HvJ7Jfw=
+
+ignore@^5.1.8:
+  version "5.1.8"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
+  integrity sha1-8VCotQo0KJsz4i9YiavU2AFvDlc=
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.2.1"
@@ -3000,6 +3069,11 @@ jsonschema@^1.2.5:
   resolved "https://repo.forge.lmig.com/api/npm/npm/jsonschema/-/jsonschema-1.2.6.tgz#52b0a8e9dc06bbae7295249d03e4b9faee8a0c0b"
   integrity sha1-UrCo6dwGu65ylSSdA+S5+u6KDAs=
 
+jsonschema@^1.4.0:
+  version "1.4.0"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/jsonschema/-/jsonschema-1.4.0.tgz#1afa34c4bc22190d8e42271ec17ac8b3404f87b2"
+  integrity sha1-Gvo0xLwiGQ2OQicewXrIs0BPh7I=
+
 jsprim@^1.2.2:
   version "1.4.1"
   resolved "https://repo.forge.lmig.com/api/npm/npm/jsprim/-/jsprim-1.4.1.tgz#313e66bc1e5cc06e438bc1b7499c2e5c56acb6a2"
@@ -3120,6 +3194,13 @@ lru-cache@^5.1.1:
   integrity sha1-HaJ+ZxAnGUdpXa9oSOhH8B2EuSA=
   dependencies:
     yallist "^3.0.2"
+
+lru-cache@^6.0.0:
+  version "6.0.0"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
+  integrity sha1-bW/mVw69lqr5D8rR2vo7JWbbOpQ=
+  dependencies:
+    yallist "^4.0.0"
 
 make-dir@^3.0.0:
   version "3.1.0"
@@ -3921,6 +4002,13 @@ semver@^7.2.1, semver@^7.2.2, semver@^7.3.2:
   resolved "https://repo.forge.lmig.com/api/npm/npm/semver/-/semver-7.3.2.tgz#604962b052b81ed0786aae84389ffba70ffd3938"
   integrity sha1-YElisFK4HtB4aq6EOJ/7pw/9OTg=
 
+semver@^7.3.5:
+  version "7.3.5"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/semver/-/semver-7.3.5.tgz#0b621c879348d8998e4b0e4be94b3f12e6018ef7"
+  integrity sha1-C2Ich5NI2JmOSw5L6Us/EuYBjvc=
+  dependencies:
+    lru-cache "^6.0.0"
+
 set-blocking@^2.0.0:
   version "2.0.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
@@ -4465,6 +4553,11 @@ universalify@^1.0.0:
   resolved "https://repo.forge.lmig.com/api/npm/npm/universalify/-/universalify-1.0.0.tgz#b61a1da173e8435b2fe3c67d29b9adf8594bd16d"
   integrity sha1-thodoXPoQ1sv48Z9Kbmt+FlL0W0=
 
+universalify@^2.0.0:
+  version "2.0.0"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
+  integrity sha1-daSYTv7cSwiXXFrrc/Uw0C3yVxc=
+
 unpipe@1.0.0:
   version "1.0.0"
   resolved "https://repo.forge.lmig.com/api/npm/npm/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
@@ -4717,6 +4810,11 @@ yallist@^3.0.2:
   version "3.1.1"
   resolved "https://repo.forge.lmig.com/api/npm/npm/yallist/-/yallist-3.1.1.tgz#dbb7daf9bfd8bac9ab45ebf602b8cbad0d5d08fd"
   integrity sha1-27fa+b/YusmrRev2ArjLrQ1dCP0=
+
+yallist@^4.0.0:
+  version "4.0.0"
+  resolved "https://repo.forge.lmig.com/api/npm/npm/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
+  integrity sha1-m7knkNnA7/7GO+c1GeEaNQGaOnI=
 
 yaml@^1.10.0:
   version "1.10.0"

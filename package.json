@@ -20,6 +20,7 @@
     "jest": "^26.4.2"
   },
   "dependencies": {
+    "@aws-cdk/aws-iam": "^1.95.1",
     "@aws-cdk/aws-iot": "^1.62.0",
     "@aws-cdk/core": "1.62.0",
     "aws-sdk": "^2.825.0",
