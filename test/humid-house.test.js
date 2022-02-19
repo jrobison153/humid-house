@@ -3,9 +3,11 @@ const awsAssert = require('@aws-cdk/assert');
 const humidHouseStack = require('../lib/bootstrap-stack');
 const {
   HUMIDITY_TOPIC,
+  IOT_POLICY,
   RASPBERRY_PI_S01_CERT_ID,
   RASPBERRY_PI_S01,
   RASPBERRY_PI_S01_PRINCIPAL_ATTACHMENT_ID,
+  RASPBERRY_PI_S01_POLICY_PRINCIPAL_ATTACHMENT_ID,
 } = require('../lib/humid-house-stack');
 const {
   arrayWith,
@@ -25,36 +27,29 @@ const STACK_ID = 'MyTestStack';
 const BOGUS_ACCOUNT_ID = '123456789';
 const BOGUS_ACCOUNT_REGION = 'mykitchen';
 
-let defaultCsrAdapter;
-let cacheStub;
-
-beforeEach(async () => {
-
-  cacheStub = cache();
-
-  defaultCsrAdapter = cachedCsr(cacheStub);
-
-  csrFactory.setDefaultCsrAdapter(defaultCsrAdapter);
-
-  process.env.CDK_DEFAULT_ACCOUNT = BOGUS_ACCOUNT_ID;
-  process.env.CDK_DEFAULT_REGION = BOGUS_ACCOUNT_REGION;
-});
-
-afterEach(() => {
-
-  csrFactory.resetDefaultCsrAdapter();
-});
-
 describe('When generating the stack', () => {
 
+  let defaultCsrAdapter;
+  let cacheStub;
   let stack;
-  let synthedStack;
+
+  afterEach(() => {
+
+    csrFactory.resetDefaultCsrAdapter();
+  });
 
   beforeEach(async () => {
 
-    stack = await humidHouseStack(STACK_ID);
+    cacheStub = cache();
 
-    synthedStack = SynthUtils.toCloudFormation(stack);
+    defaultCsrAdapter = cachedCsr(cacheStub);
+
+    csrFactory.setDefaultCsrAdapter(defaultCsrAdapter);
+
+    process.env.CDK_DEFAULT_ACCOUNT = BOGUS_ACCOUNT_ID;
+    process.env.CDK_DEFAULT_REGION = BOGUS_ACCOUNT_REGION;
+
+    stack = await humidHouseStack(STACK_ID);
   });
 
   test('Then the humid-house app tag is applied to the stack', () => {
@@ -88,6 +83,7 @@ describe('When generating the stack', () => {
 
   test('Then there is an IoT thing with the correct id', async () => {
 
+    const synthedStack = SynthUtils.toCloudFormation(stack);
     expect(synthedStack.Resources[RASPBERRY_PI_S01]).toBeDefined();
   });
 
@@ -120,6 +116,7 @@ describe('When generating the stack', () => {
 
     test('Then certificate assigned with new CSR', async () => {
 
+      const synthedStack = SynthUtils.toCloudFormation(stack);
       expect(synthedStack.Resources[RASPBERRY_PI_S01_CERT_ID].Properties.CertificateSigningRequest)
           .toMatch(/-----BEGIN CERTIFICATE REQUEST-----[\s\S]+-----END CERTIFICATE REQUEST-----/);
     });
@@ -166,6 +163,27 @@ describe('When generating the stack', () => {
         },
       },
     }));
+  });
+
+  test('Then the policy is attached to the certificate', () => {
+
+    awsExpect(stack).to(haveResourceLike('AWS::IoT::PolicyPrincipalAttachment', {
+      PolicyName: {
+        Ref: IOT_POLICY,
+      },
+      Principal: {
+        'Fn::GetAtt': [
+          RASPBERRY_PI_S01_CERT_ID,
+          'Arn',
+        ],
+      },
+    }));
+  });
+
+  test('Then there is an PolicyPrincipalAttachment with the correct id', async () => {
+
+    const synthedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthedStack.Resources[RASPBERRY_PI_S01_POLICY_PRINCIPAL_ATTACHMENT_ID]).toBeDefined();
   });
 
   test('Then the thing is granted permission to connect to IoT Core', () => {
